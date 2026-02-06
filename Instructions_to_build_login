@@ -1,0 +1,91 @@
+Read me
+
+Okay, buddy, imagine your website is a super fun treehouse clubhouse for your business. Only real friends (clients/customers) can come in to play, and only the special boss (admin—you!) can go into the secret back room to control everything. We need a magic door with a lock (secure login and signup) so no bad guys get in.
+We're gonna use safe, grown-up toys that smart people already made, so it's super secure (no homemade locks that break!). The toys are:
+
+Next.js: Builds the treehouse (website front and back).
+Better Auth: The magic lock that checks passwords safely (it hides passwords with secret codes).
+Prisma + PostgreSQL: A big treasure chest (database) to remember who's allowed in.
+GitHub: Your drawing notebook to save all the plans.
+Railway: The big park that opens your treehouse to the whole world (and gives you the treasure chest for free).
+
+We'll use a ready-made treehouse kit (a "template") because it's the safest and fastest way. It already has secure login/signup. Then we'll add two doors: one normal door for clients, one special door for admin.
+Here are the baby steps. Go slow, one at a time, like stacking blocks.
+Step 1: Get your free accounts (like getting tickets to the park)
+
+Go to github.com and make a free account if you don't have one.
+Go to railway.app and make a free account (use your email or GitHub to sign in). This is where we'll build everything.
+
+Step 2: Grab the ready-made secure treehouse kit
+
+In Railway, click "New Project".
+Choose "Deploy from Template" (or search for templates).
+Look for "Next.js + Better Auth + Prisma" (it's a new 2025-2026 kit with secure login already built in).
+If you see the direct button, click here: railway.app/template/nextjs-better-auth-prisma-template (or search it on Railway).
+Click "Deploy". Railway will magically build everything:
+It makes your website (Next.js).
+It adds the magic lock (Better Auth with safe password hiding).
+It gives you a free treasure chest (PostgreSQL database).
+
+Wait a few minutes. When it's done, Railway gives you a web address (like your-treehouse.up.railway.app). Click it— you'll see a working website with login and signup already!
+
+Step 3: Save your treehouse plans in GitHub (so you can change it later)
+
+After it deploys, Railway will ask if you want to connect a GitHub repo.
+Say yes, make a new empty repo on GitHub (name it something like "my-business-login").
+Connect it. Now all your plans are saved safely, and changes happen automatically.
+
+Step 4: Add the two special doors (client login vs admin login)
+Now we tweak it a tiny bit for "client" friends and "admin" boss.
+
+On your computer, download (clone) your project from GitHub:
+Open a terminal (black box on computer).
+Type: git clone https://github.com/your-name/my-business-login.git (use your real link).
+Go inside the folder: cd my-business-login.
+Install toys: npm install.
+Run it locally to test: npm run dev (open localhost:3000 in browser).
+
+Open the code in a simple editor (like VS Code—free download).
+Find the user treasure chest plan (file called prisma/schema.prisma). Add a "role" to remember who's boss:
+Add this inside the User model:textrole String @default("client")  // most people are "client", boss is "admin"
+Update the treasure chest:
+Type in terminal: npx prisma migrate dev --name add-roles
+Make the first boss (admin) account:
+There's usually a "seed" file or you can use Prisma Studio.
+Or just sign up a new account on your test site, then in Railway dashboard → PostgreSQL → Query tab, run this magic spell:textUPDATE "User" SET role = 'admin' WHERE email = 'your-email@example.com';
+
+Make two doors:
+Normal client door: Keep the existing /login and /signup pages (or make one called app/login/page.tsx).
+Special admin door: Make a new folder app/admin/login/page.tsx.
+Copy the normal login form, but after they log in, check if role is "admin". If not, say "Sorry, only boss!" and send them away.
+
+Protect the secret rooms:
+Client pages (like dashboard): Check if logged in.
+Admin pages (like /admin): Check if logged in AND role === "admin".
+The template already has examples of "protected pages"—just add a tiny check like:textif (session.user.role !== "admin") { redirect to home }
+Signup = only for clients (it auto sets role "client").
+
+Step 5: Make it pretty and safe
+
+Add nice buttons and forms (the template uses pretty styles already).
+Safety stuff is automatic:
+Passwords are hidden with super strong magic (hashing).
+Railway gives free "HTTPS" lock (green padlock in browser).
+Never ever write passwords in code!
+
+
+Step 6: Open the treehouse to everyone
+
+Push your changes to GitHub: git add . then git commit -m "added roles" then git push.
+Railway sees the changes and rebuilds automatically in minutes.
+Share your Railway web address with customers!
+
+Done! You now have a super safe clubhouse with:
+
+Signup/login for clients.
+Special login for admin (you).
+Everything saved securely in PostgreSQL.
+Plans backed up on GitHub.
+Open to the world on Railway.
+
+If something gets stuck (like a block falls), search YouTube for "Better Auth Next.js tutorial" or ask here again with the exact oopsie message. You got this, little builder! 🚀644ms70 sources
