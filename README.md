@@ -4,7 +4,7 @@ A Next.js application with secure authentication for clients and administrators,
 
 ## Features
 
-- **Secure Authentication**: Powered by Better Auth with email/password login
+- **Secure Authentication**: Powered by NextAuth.js with email/password login
 - **Role-Based Access Control**: Different experiences for clients and admins
 - **Database Integration**: PostgreSQL with Prisma ORM
 - **Modern UI**: Clean, responsive design with Tailwind CSS
@@ -13,7 +13,7 @@ A Next.js application with secure authentication for clients and administrators,
 ## Tech Stack
 
 - **Framework**: Next.js 14 (App Router)
-- **Authentication**: Better Auth
+- **Authentication**: NextAuth.js with Prisma Adapter
 - **Database**: PostgreSQL with Prisma
 - **Styling**: Tailwind CSS
 - **Deployment**: Ready for Railway deployment
@@ -47,7 +47,8 @@ cp .env.example .env.local
 ```env
 DATABASE_URL="postgresql://username:password@localhost:5432/af5"
 AUTH_SECRET="your-super-secret-auth-key-here-make-it-long-and-random"
-NEXT_PUBLIC_BASE_URL="http://localhost:3000"
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your-nextauth-secret-key-here"
 ```
 
 5. Generate Prisma client and push schema to database:
@@ -66,8 +67,8 @@ Visit [http://localhost:3000](http://localhost:3000) to see the application.
 ## Environment Variables
 
 - `DATABASE_URL`: PostgreSQL connection string
-- `AUTH_SECRET`: Secret key for signing authentication tokens
-- `NEXT_PUBLIC_BASE_URL`: Base URL for the application
+- `AUTH_SECRET` or `NEXTAUTH_SECRET`: Secret key for signing authentication tokens
+- `NEXTAUTH_URL`: Base URL for the application
 
 ## Usage
 
@@ -113,8 +114,9 @@ This application is designed for deployment on Railway. When deploying:
 │   ├── dashboard/          # Client dashboard
 │   ├── admin/              # Admin dashboard
 │   └── globals.css         # Global styles
+├── lib/                    # Utility functions
 ├── prisma/                 # Database schema and migrations
-├── auth.ts                 # Better Auth configuration
+├── auth.ts                 # NextAuth configuration
 ├── middleware.ts           # Route protection middleware
 └── ...
 ```

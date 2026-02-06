@@ -1,11 +1,22 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useAuth } from 'better-auth/react';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import Link from 'next/link';
 
 export default function HomePage() {
-  const { session, signIn, signOut } = useAuth();
+  const { data: session, status } = useSession();
+
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -19,11 +30,11 @@ export default function HomePage() {
           <div className="space-y-4">
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="font-medium">Logged in as:</p>
-              <p className="text-gray-700">{session.user.email}</p>
-              <p className="text-sm text-gray-500">Role: {session.user.role || 'client'}</p>
+              <p className="text-gray-700">{session.user?.email}</p>
+              <p className="text-sm text-gray-500">Role: {session.user?.role || 'client'}</p>
             </div>
             
-            {session.user.role === 'admin' ? (
+            {session.user?.role === 'admin' ? (
               <Link href="/admin/dashboard" className="block w-full py-3 px-4 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg text-center transition duration-200">
                 Go to Admin Dashboard
               </Link>

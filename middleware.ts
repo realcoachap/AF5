@@ -1,19 +1,19 @@
-import { auth } from './auth';
+import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
-  // Check if user is authenticated and has proper role for protected routes
-  const session = await auth.$ctx.getSession();
+  // Get the token from the request
+  const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
   
   // Protect admin routes
   if (request.nextUrl.pathname.startsWith('/admin')) {
-    if (!session) {
+    if (!token) {
       // Redirect to login if not authenticated
       return NextResponse.redirect(new URL('/auth/login', request.url));
     }
     
-    if (session.user.role !== 'admin') {
+    if (token.role !== 'admin') {
       // Redirect non-admins away from admin pages
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
@@ -21,12 +21,12 @@ export async function middleware(request: NextRequest) {
   
   // Protect client dashboard
   if (request.nextUrl.pathname.startsWith('/dashboard')) {
-    if (!session) {
+    if (!token) {
       // Redirect to login if not authenticated
       return NextResponse.redirect(new URL('/auth/login', request.url));
     }
     
-    if (session.user.role === 'admin') {
+    if (token.role === 'admin') {
       // Redirect admins to admin dashboard instead
       return NextResponse.redirect(new URL('/admin/dashboard', request.url));
     }

@@ -1,12 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from 'better-auth/react';
+import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
-  const { signIn } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,15 +16,17 @@ export default function LoginPage() {
     setError('');
     
     try {
-      const result = await signIn?.('credentials', {
+      const result = await signIn('credentials', {
         email,
         password,
-        redirectTo: '/', // Will be redirected based on role after checking
-        callbackURL: '/',
+        redirect: false, // Prevent default redirect so we can handle it manually
       });
       
       if (result?.error) {
         setError(result.error);
+      } else {
+        // Successful login, redirect based on role
+        router.push('/');
       }
     } catch (err) {
       setError('Login failed. Please try again.');

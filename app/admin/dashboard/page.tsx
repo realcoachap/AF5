@@ -1,39 +1,20 @@
-'use client';
+'use server';
 
-import { useAuth } from 'better-auth/react';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../../../auth';
+import { redirect } from 'next/navigation';
 import Link from 'next/link';
 
-export default function AdminDashboard() {
-  const { session } = useAuth();
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
+export default async function AdminDashboard() {
+  const session = await getServerSession(authOptions);
 
-  useEffect(() => {
-    if (!session) {
-      router.push('/auth/login');
-    } else if (session.user.role !== 'admin') {
-      // Non-admins should be redirected
-      router.push('/dashboard');
-    } else {
-      setLoading(false);
-    }
-  }, [session, router]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-indigo-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
+  if (!session) {
+    redirect('/auth/login');
   }
 
-  if (!session || session.user.role !== 'admin') {
-    return null; // Redirecting will happen in useEffect
+  if (session.user?.role !== 'admin') {
+    // Non-admins should be redirected to client dashboard
+    redirect('/dashboard');
   }
 
   return (
@@ -43,7 +24,7 @@ export default function AdminDashboard() {
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">Welcome, {session.user.name || session.user.email}</span>
+              <span className="text-sm text-gray-600">Welcome, {session.user?.name || session.user?.email}</span>
               <Link href="/" className="text-blue-600 hover:underline">Home</Link>
             </div>
           </div>

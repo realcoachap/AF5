@@ -1,39 +1,56 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from 'better-auth/react';
+import { signIn } from 'next-auth/react';
 import Link from 'next/link';
+import { registerUser } from '../../../lib/auth';
 
 export default function RegisterPage() {
-  const { signUp } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
 
     if (password !== confirmPassword) {
       setError('Passwords do not match');
+      setIsLoading(false);
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      setIsLoading(false);
       return;
     }
 
     try {
-      const result = await signUp?.('email', {
+      // Register the user via our server action
+      await registerUser({ name, email, password });
+
+      // Now try to sign in the user
+      const result = await signIn('credentials', {
         email,
         password,
-        name,
-        role: 'client', // New users are by default clients
+        redirect: false, // Prevent default redirect so we can handle it manually
       });
 
       if (result?.error) {
-        setError(result.error.description || 'Registration failed');
+        setError('Registration successful, but login failed. Please try logging in.');
+      } else {
+        // Redirect to home page after successful registration and login
+        window.location.href = '/';
       }
-    } catch (err) {
-      setError('Registration failed. Please try again.');
+    } catch (err: any) {
+      setError(err.message || 'Registration failed. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -64,6 +81,7 @@ export default function RegisterPage() {
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="John Doe"
+              disabled={isLoading}
             />
           </div>
 
@@ -79,6 +97,7 @@ export default function RegisterPage() {
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="your@email.com"
+              disabled={isLoading}
             />
           </div>
 
@@ -94,6 +113,7 @@ export default function RegisterPage() {
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="••••••••"
+              disabled={isLoading}
             />
           </div>
 
@@ -109,14 +129,16 @@ export default function RegisterPage() {
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="••••••••"
+              disabled={isLoading}
             />
           </div>
 
           <button
             type="submit"
-            className="w-full py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition duration-200"
+            className={`w-full py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition duration-200 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+            disabled={isLoading}
           >
-            Register
+            {isLoading ? 'Creating Account...' : 'Register'}
           </button>
         </form>
 

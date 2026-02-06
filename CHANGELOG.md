@@ -2,6 +2,24 @@
 
 All notable changes to AF5 will be documented in this file.
 
+## [1.1.0] - 2026-02-06
+
+### Changed
+- Replaced Better Auth with NextAuth.js for better Next.js 14 compatibility
+- Updated authentication system to use NextAuth.js with Prisma adapter
+- Migrated all authentication logic to work with NextAuth.js
+- Updated middleware to use NextAuth.js token verification
+- Converted client-side dashboard pages to server-side rendering for better security
+- Updated API routes to work with NextAuth.js
+- Updated environment variable requirements for NextAuth.js
+- Fixed build compatibility issues for Railway deployment
+
+### Fixed
+- Resolved build errors related to Better Auth compatibility
+- Fixed crypto module compatibility issues with Next.js
+- Improved authentication flow for both client and admin users
+- Enhanced security by using server-side session validation
+
 ## [1.0.0] - 2026-02-06
 
 ### Added
